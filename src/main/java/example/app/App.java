@@ -15,7 +15,7 @@ public class App {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT message FROM messages");
 
-            while (!rs.wasNull() && rs.next()) {
+            while (rs.next()) {
                 System.out.println(rs.getString(1));
             }
             rs.close();
@@ -29,7 +29,12 @@ public class App {
         try {
             PGSimpleDataSource ds = new PGSimpleDataSource();
             ds.setApplicationName("docs_quickstart_java");
-            ds.setUrl(JDBC_DATABASE_URL);
+            ds.setUrl(String.format(JDBC_DATABASE_URL,
+                    System.getProperty("cockroachDBCluster"),
+                    System.getProperty("cockroachDBPort"),
+                    System.getProperty("cockroachDBDatabase"),
+                    System.getProperty("cockroachDBPassword"),
+                    System.getProperty("cockroachDBUser")));
             Connection connection = ds.getConnection();
             executeStmt(connection);
         } catch (Exception e) {

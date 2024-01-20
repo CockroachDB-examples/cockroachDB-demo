@@ -20,7 +20,13 @@ dependencies {
 
 application {
     mainClass = 'example.app.App'
-    applicationDefaultJvmArgs = ['-Djdk.tls.client.protocols=TLSv1.2']
+    applicationDefaultJvmArgs = ['-Djdk.tls.client.protocols=TLSv1.2',
+                                 "-DcockroachDBCluster=${cockroachDBCluster}",
+                                 "-DcockroachDBPort=${cockroachDBPort}",
+                                 "-DcockroachDBDatabase=${cockroachDBDatabase}",
+                                 "-DcockroachDBUser=${cockroachDBUser}",
+                                 "-DcockroachDBPassword=${cockroachDBPassword}"
+                                ]
 }
 
 run.dependsOn flywayMigrate
