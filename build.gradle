@@ -1,0 +1,32 @@
+buildscript {
+    dependencies {
+        classpath("org.postgresql:postgresql:42.7.1")
+        classpath("org.flywaydb:flyway-database-postgresql:10.5.0")
+    }
+}
+
+plugins {
+    id 'application'
+    id "com.github.ben-manes.versions" version "0.50.0"
+    id "org.flywaydb.flyway" version "10.0.0"
+}
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation "org.postgresql:postgresql:42.7.1"
+}
+
+application {
+    mainClass = 'example.app.App'
+    applicationDefaultJvmArgs = ['-Djdk.tls.client.protocols=TLSv1.2']
+}
+
+run.dependsOn flywayMigrate
+
+flyway {
+    url = "jdbc:postgresql://${cockroachDBCluster}:${cockroachDBPort}/${cockroachDBDatabase}?sslmode=verify-full"
+    user = "${cockroachDBUser}"
+    password = "${cockroachDBPassword}"
+}
