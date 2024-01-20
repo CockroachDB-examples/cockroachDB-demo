@@ -8,7 +8,7 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 public class App {
 
-    private static final String JDBC_DATABASE_URL = "jdbc:postgresql://plucky-amoeba-12940.8nj.gcp-europe-west1.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full&password=6N9ApqapYCRmJO4qjC5Ubg&user=pippa";
+    private static final String JDBC_DATABASE_URL = "jdbc:postgresql://%s:%s/%s?sslmode=verify-full&password=%s&user=%s";
 
     public static void executeStmt(final Connection conn) {
         try {
