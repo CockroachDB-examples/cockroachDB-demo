@@ -17,21 +17,22 @@ repositories {
 dependencies {
     implementation "org.postgresql:postgresql:${postgresVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-
 }
 
+def cockroachProperties = [
+           "-DcockroachDBCluster=${cockroachDBCluster}",
+           "-DcockroachDBPort=${cockroachDBPort}",
+           "-DcockroachDBDatabase=${cockroachDBDatabase}",
+           "-DcockroachDBUser=${cockroachDBUser}",
+           "-DcockroachDBPassword=${cockroachDBPassword}"
+]
 application {
     mainClass = 'com.example.cockroachdb.App'
-    applicationDefaultJvmArgs = ['-Djdk.tls.client.protocols=TLSv1.2',
-                                 "-DcockroachDBCluster=${cockroachDBCluster}",
-                                 "-DcockroachDBPort=${cockroachDBPort}",
-                                 "-DcockroachDBDatabase=${cockroachDBDatabase}",
-                                 "-DcockroachDBUser=${cockroachDBUser}",
-                                 "-DcockroachDBPassword=${cockroachDBPassword}"
-                                ]
+    applicationDefaultJvmArgs = cockroachProperties
 }
 
 run.dependsOn flywayMigrate
+test.dependsOn flywayMigrate
 
 flyway {
     url = "jdbc:postgresql://${cockroachDBCluster}:${cockroachDBPort}/${cockroachDBDatabase}?sslmode=verify-full"
@@ -41,11 +42,5 @@ flyway {
 
 test {
     useJUnitPlatform()
-    jvmArgs = [
-                "-DcockroachDBCluster=${cockroachDBCluster}",
-                "-DcockroachDBPort=${cockroachDBPort}",
-                "-DcockroachDBDatabase=${cockroachDBDatabase}",
-                "-DcockroachDBUser=${cockroachDBUser}",
-                "-DcockroachDBPassword=${cockroachDBPassword}"
-    ]
+    jvmArgs = cockroachProperties
 }
