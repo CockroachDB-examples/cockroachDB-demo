@@ -1,25 +1,27 @@
 buildscript {
     dependencies {
-        classpath("org.postgresql:postgresql:42.7.1")
-        classpath("org.flywaydb:flyway-database-postgresql:10.5.0")
+        classpath("org.flywaydb:flyway-database-postgresql:${flywayVersion}")
     }
 }
 
 plugins {
     id 'application'
-    id "com.github.ben-manes.versions" version "0.50.0"
-    id "org.flywaydb.flyway" version "10.0.0"
+    id "com.github.ben-manes.versions" version "${versionPluginVersion}"
+    id "org.flywaydb.flyway" version "${flywayVersion}"
 }
 
 repositories {
     mavenCentral()
 }
+
 dependencies {
-    implementation "org.postgresql:postgresql:42.7.1"
+    implementation "org.postgresql:postgresql:${postgresVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+
 }
 
 application {
-    mainClass = 'example.app.App'
+    mainClass = 'com.example.cockroachdb.App'
     applicationDefaultJvmArgs = ['-Djdk.tls.client.protocols=TLSv1.2',
                                  "-DcockroachDBCluster=${cockroachDBCluster}",
                                  "-DcockroachDBPort=${cockroachDBPort}",
@@ -35,4 +37,15 @@ flyway {
     url = "jdbc:postgresql://${cockroachDBCluster}:${cockroachDBPort}/${cockroachDBDatabase}?sslmode=verify-full"
     user = "${cockroachDBUser}"
     password = "${cockroachDBPassword}"
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs = [
+                "-DcockroachDBCluster=${cockroachDBCluster}",
+                "-DcockroachDBPort=${cockroachDBPort}",
+                "-DcockroachDBDatabase=${cockroachDBDatabase}",
+                "-DcockroachDBUser=${cockroachDBUser}",
+                "-DcockroachDBPassword=${cockroachDBPassword}"
+    ]
 }
