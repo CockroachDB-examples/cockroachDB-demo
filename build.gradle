@@ -6,41 +6,42 @@ buildscript {
 
 plugins {
     id 'application'
+    id "org.springframework.boot" version "${springBootVersion}"
     id "com.github.ben-manes.versions" version "${versionPluginVersion}"
     id "org.flywaydb.flyway" version "${flywayVersion}"
 }
+
+apply plugin: 'io.spring.dependency-management'
 
 repositories {
     mavenCentral()
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 dependencies {
     implementation "org.postgresql:postgresql:${postgresVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
 
-def cockroachProperties = [
-           "-DcockroachDBCluster=${cockroachDBCluster}",
-           "-DcockroachDBPort=${cockroachDBPort}",
-           "-DcockroachDBDatabase=${cockroachDBDatabase}",
-           "-DcockroachDBUser=${cockroachDBUser}",
-           "-DcockroachDBPassword=${cockroachDBPassword}"
-]
 application {
     mainClass = 'com.example.cockroachdb.App'
-    applicationDefaultJvmArgs = cockroachProperties
 }
 
 run.dependsOn flywayMigrate
 test.dependsOn flywayMigrate
 
-flyway {
-    url = "jdbc:postgresql://${cockroachDBCluster}:${cockroachDBPort}/${cockroachDBDatabase}?sslmode=verify-full"
-    user = "${cockroachDBUser}"
-    password = "${cockroachDBPassword}"
-}
-
 test {
     useJUnitPlatform()
-    jvmArgs = cockroachProperties
+}
+
+processResources {
+    expand project.properties
 }
