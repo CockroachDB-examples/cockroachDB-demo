@@ -37,6 +37,6 @@ public class App implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        System.out.println(getResults().getFirst());
+        getResults().forEach(System.out::println);
     }
 }
